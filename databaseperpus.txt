@@ -1,0 +1,191 @@
+
+Setting environment for using XAMPP for Windows.
+DELL@DESKTOP-43U0MVS c:\xampp
+# mysql -u root
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 40
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> create database perpustakaan;
+Query OK, 1 row affected (0.002 sec)
+
+MariaDB [(none)]> use perpustakaan;
+Database changed
+MariaDB [perpustakaan]> CREATE TABLE anggota (
+    ->     id_anggota INT AUTO_INCREMENT PRIMARY KEY,
+    ->     nama VARCHAR(100) NOT NULL,
+    ->     kelas VARCHAR(20) NOT NULL,
+    ->     alamat TEXT,
+    ->     tanggal_daftar DATE);
+   Query OK, 0 rows affected (0.027 sec)
+
+MariaDB [perpustakaan]> CREATE TABLE buku (
+    ->     id_buku INT AUTO_INCREMENT PRIMARY KEY,
+    ->     judul VARCHAR(100) NOT NULL,
+    ->     pengarang VARCHAR(100),
+    ->     penerbit VARCHAR(100),
+    ->     tahun_terbit YEAR,
+    ->     stok INT DEFAULT 0);
+    Query OK, 0 rows affected (0.031 sec)
+
+MariaDB [perpustakaan]> CREATE TABLE peminjaman (
+    ->     id_peminjaman INT AUTO_INCREMENT PRIMARY KEY,
+    ->     id_anggota INT,
+    ->     id_buku INT,
+    ->     tanggal_pinjam DATE,
+    ->     tanggal_kembali DATE,
+    ->     status VARCHAR(20),
+    ->     FOREIGN KEY (id_anggota) REFERENCES anggota(id_anggota),
+    ->     FOREIGN KEY (id_buku) REFERENCES buku(id_buku));
+  
+Query OK, 0 rows affected (0.075 sec)
+
+MariaDB [perpustakaan]> ALTER TABLE anggota ADD no_hp VARCHAR(15);
+Query OK, 0 rows affected (0.026 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [perpustakaan]> ALTER TABLE anggota DROP no_hp;
+Query OK, 0 rows affected (0.019 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [perpustakaan]> INSERT INTO anggota (nama, kelas, alamat, tanggal_daftar) VALUES
+    -> ('Andi', 'XI RPL 1', 'Bogor', '2026-01-10'),
+    -> ('Budi', 'XI RPL 2', 'Cibinong', '2026-01-11'),
+    -> ('Citra', 'XI RPL 1', 'Depok', '2026-01-12');
+Query OK, 3 rows affected (0.009 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [perpustakaan]> INSERT INTO buku (judul, pengarang, penerbit, tahun_terbit, stok) VALUES
+    -> ('Pemrograman Java', 'Eko', 'Informatika', 2022, 10),
+    -> ('Database MySQL', 'Rudi', 'Andi Offset', 2021, 5),
+    -> ('Algoritma Dasar', 'Sari', 'Erlangga', 2020, 7);
+Query OK, 3 rows affected (0.009 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [perpustakaan]> INSERT INTO peminjaman (id_anggota, id_buku, tanggal_pinjam, tanggal_kembali, status) VALUES
+    -> (1, 1, '2026-02-01', '2026-02-07', 'Dipinjam'),
+    -> (2, 2, '2026-02-02', '2026-02-08', 'Dipinjam'),
+    -> (3, 3, '2026-02-03', '2026-02-09', 'Dikembalikan');
+Query OK, 3 rows affected (0.010 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [perpustakaan]> SELECT * FROM anggota;
++------------+-------+----------+----------+----------------+
+| id_anggota | nama  | kelas    | alamat   | tanggal_daftar |
++------------+-------+----------+----------+----------------+
+|          1 | Andi  | XI RPL 1 | Bogor    | 2026-01-10     |
+|          2 | Budi  | XI RPL 2 | Cibinong | 2026-01-11     |
+|          3 | Citra | XI RPL 1 | Depok    | 2026-01-12     |
++------------+-------+----------+----------+----------------+
+3 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> SELECT * FROM buku;
++---------+------------------+-----------+-------------+--------------+------+
+| id_buku | judul            | pengarang | penerbit    | tahun_terbit | stok |
++---------+------------------+-----------+-------------+--------------+------+
+|       1 | Pemrograman Java | Eko       | Informatika |         2022 |   10 |
+|       2 | Database MySQL   | Rudi      | Andi Offset |         2021 |    5 |
+|       3 | Algoritma Dasar  | Sari      | Erlangga    |         2020 |    7 |
++---------+------------------+-----------+-------------+--------------+------+
+3 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> SELECT * FROM peminjaman;
++---------------+------------+---------+----------------+-----------------+--------------+
+| id_peminjaman | id_anggota | id_buku | tanggal_pinjam | tanggal_kembali | status       |
++---------------+------------+---------+----------------+-----------------+--------------+
+|             1 |          1 |       1 | 2026-02-01     | 2026-02-07      | Dipinjam     |
+|             2 |          2 |       2 | 2026-02-02     | 2026-02-08      | Dipinjam     |
+|             3 |          3 |       3 | 2026-02-03     | 2026-02-09      | Dikembalikan |
++---------------+------------+---------+----------------+-----------------+--------------+
+3 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> SELECT * FROM buku
+    -> WHERE stok > 5;
++---------+------------------+-----------+-------------+--------------+------+
+| id_buku | judul            | pengarang | penerbit    | tahun_terbit | stok |
++---------+------------------+-----------+-------------+--------------+------+
+|       1 | Pemrograman Java | Eko       | Informatika |         2022 |   10 |
+|       3 | Algoritma Dasar  | Sari      | Erlangga    |         2020 |    7 |
++---------+------------------+-----------+-------------+--------------+------+
+2 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> UPDATE anggota
+    -> SET alamat = 'Jakarta'
+    -> WHERE id_anggota = 1;
+Query OK, 1 row affected (0.010 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+MariaDB [perpustakaan]> SELECT * FROM anggota;
++------------+-------+----------+----------+----------------+
+| id_anggota | nama  | kelas    | alamat   | tanggal_daftar |
++------------+-------+----------+----------+----------------+
+|          1 | Andi  | XI RPL 1 | Jakarta  | 2026-01-10     |
+|          2 | Budi  | XI RPL 2 | Cibinong | 2026-01-11     |
+|          3 | Citra | XI RPL 1 | Depok    | 2026-01-12     |
++------------+-------+----------+----------+----------------+
+3 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> UPDATE peminjaman
+    -> SET status = 'Dikembalikan'
+    -> WHERE id_peminjaman = 1;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [perpustakaan]> SELECT * FROM peminjaman;
++---------------+------------+---------+----------------+-----------------+--------------+
+| id_peminjaman | id_anggota | id_buku | tanggal_pinjam | tanggal_kembali | status       |
++---------------+------------+---------+----------------+-----------------+--------------+
+|             1 |          1 |       1 | 2026-02-01     | 2026-02-07      | Dikembalikan |
+|             2 |          2 |       2 | 2026-02-02     | 2026-02-08      | Dipinjam     |
+|             3 |          3 |       3 | 2026-02-03     | 2026-02-09      | Dikembalikan |
++---------------+------------+---------+----------------+-----------------+--------------+
+3 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> SELECT
+    ->     peminjaman.id_peminjaman,
+    ->     anggota.nama AS nama_anggota,
+    ->     buku.judul,
+    ->     peminjaman.tanggal_pinjam,
+    ->     peminjaman.tanggal_kembali,
+    ->     peminjaman.status
+    -> FROM peminjaman
+    -> JOIN anggota ON peminjaman.id_anggota = anggota.id_anggota
+    -> JOIN buku ON peminjaman.id_buku = buku.id_buku;
++---------------+--------------+------------------+----------------+-----------------+--------------+
+| id_peminjaman | nama_anggota | judul            | tanggal_pinjam | tanggal_kembali | status       |
++---------------+--------------+------------------+----------------+-----------------+--------------+
+|             1 | Andi         | Pemrograman Java | 2026-02-01     | 2026-02-07      | Dikembalikan |
+|             2 | Budi         | Database MySQL   | 2026-02-02     | 2026-02-08      | Dipinjam     |
+|             3 | Citra        | Algoritma Dasar  | 2026-02-03     | 2026-02-09      | Dikembalikan |
++---------------+--------------+------------------+----------------+-----------------+--------------+
+3 rows in set (0.001 sec)
+
+MariaDB [perpustakaan]> CREATE VIEW v_peminjaman AS
+    -> SELECT
+    ->     anggota.nama AS nama_anggota,
+    ->     buku.judul,
+    ->     peminjaman.tanggal_pinjam,
+    ->     peminjaman.tanggal_kembali,
+    ->     peminjaman.status
+    -> FROM peminjaman
+    -> JOIN anggota ON peminjaman.id_anggota = anggota.id_anggota
+    -> JOIN buku ON peminjaman.id_buku = buku.id_buku;
+Query OK, 0 rows affected (0.007 sec)
+
+MariaDB [perpustakaan]> SELECT * FROM v_peminjaman;
++--------------+------------------+----------------+-----------------+--------------+
+| nama_anggota | judul            | tanggal_pinjam | tanggal_kembali | status       |
++--------------+------------------+----------------+-----------------+--------------+
+| Andi         | Pemrograman Java | 2026-02-01     | 2026-02-07      | Dikembalikan |
+| Budi         | Database MySQL   | 2026-02-02     | 2026-02-08      | Dipinjam     |
+| Citra        | Algoritma Dasar  | 2026-02-03     | 2026-02-09      | Dikembalikan |
++--------------+------------------+----------------+-----------------+--------------+
+3 rows in set (0.002 sec)
+
+MariaDB [perpustakaan]>MariaDB [perpustakaan]> DROP TABLE peminjaman;
+Query OK, 0 rows affected (0.073 sec)
